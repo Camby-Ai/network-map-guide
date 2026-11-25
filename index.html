@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Network Map Build Guide &middot; CAMBY Ai</title>
+<meta name="description" content="Put everyone you have texted, emailed and met on one private map, see how they are tied to each other, and find the warm path to the person you want to meet. A build brief for your own AI.">
+<meta name="theme-color" content="#0B0D12">
+<link rel="icon" href="camby-ai-logo-web.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CAMBY Ai">
+<meta property="og:title" content="Network Map Build Guide">
+<meta property="og:description" content="Put everyone you have texted, emailed and met on one private map, see how they are tied to each other, and find the warm path to the person you want to meet. A build brief for your own AI.">
+<meta property="og:url" content="https://map.mikecamby.com/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Network Map Build Guide">
+<meta name="twitter:description" content="Put everyone you have texted, emailed and met on one private map, see how they are tied to each other, and find the warm path to the person you want to meet. A build brief for your own AI.">
+<style>
+  /* Layout: single column, left-aligned. Gold hairline rules separate numbered
+     sections, mirroring the CAMBY Ai site's "01 / SECTION" structure. */
+  :root {
+    --bg:        #0B0D12;
+    --panel:     #12161E;
+    --panel-2:   #171C26;
+    --line:      #2A2E3A;
+    --line-gold: #4A3B1E;
+    --gold:      #D8AA57;
+    --gold-dim:  #8A6E38;
+    --text:      #F7F3EB;
+    --muted:     #A49B89;
+    --ink:       #17191D;
+    --font-head: Georgia, "Times New Roman", serif;
+    --font-body: Arial, Helvetica, sans-serif;
+    --font-mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.65;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  h1, h2, h3, h4 { font-family: var(--font-head); font-weight: normal; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(38px, 7vw, 68px); line-height: 1.05; letter-spacing: -0.015em; }
+  h2 { font-size: clamp(27px, 4.4vw, 40px); line-height: 1.15; letter-spacing: -0.01em; }
+  h3 { font-size: clamp(19px, 2.4vw, 23px); line-height: 1.3; }
+  h1 em, h2 em { color: var(--gold); font-style: italic; }
+  p { margin: 0; }
+
+  .eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px;
+    letter-spacing: 0.19em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0;
+  }
+  .eyebrow .sep { color: var(--gold-dim); }
+
+  /* ---------- masthead ---------- */
+  .masthead {
+    border-bottom: 1px solid var(--line);
+    background: var(--panel);
+  }
+  .masthead .wrap {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap; padding-block: 18px;
+  }
+  .masthead img { width: 168px; height: auto; display: block; }
+  .masthead .tag {
+    font-size: 11px; letter-spacing: 0.19em; text-transform: uppercase;
+    color: var(--muted); border-left: 1px solid var(--line-gold); padding-left: 14px;
+  }
+
+  /* ---------- hero ---------- */
+  .hero .wrap { padding-block: clamp(40px, 7vw, 76px); }
+  .hero-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: clamp(28px, 5vw, 56px); align-items: center; }
+  .hero-copy { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+  .lede { font-size: clamp(16px, 1.9vw, 18.5px); color: var(--muted); max-width: 54ch; }
+  .lede strong { color: var(--text); font-weight: normal; }
+
+  .portrait { position: relative; min-width: 0; }
+  .portrait img { width: 100%; max-width: 100%; height: auto; display: block; border: 1px solid var(--line-gold); }
+  .portrait figcaption {
+    margin-top: 12px; font-size: 11px; letter-spacing: 0.17em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .portrait figcaption b { color: var(--gold); font-weight: normal; }
+
+  .facts { display: flex; flex-wrap: wrap; gap: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .fact { flex: 1 1 150px; min-width: 0; padding: 16px 18px 16px 0; }
+  .fact + .fact { border-left: 1px solid var(--line); padding-left: 18px; }
+  .fact dt { font-size: 10.5px; letter-spacing: 0.17em; text-transform: uppercase; color: var(--muted); }
+  .fact dd { margin: 5px 0 0; font-family: var(--font-head); font-size: 21px; color: var(--gold); }
+
+  /* ---------- sections ---------- */
+  section { border-top: 1px solid var(--line); }
+  section .wrap { padding-block: clamp(36px, 5.5vw, 62px); }
+  .sec-head { display: flex; flex-direction: column; gap: 10px; margin-bottom: 26px; }
+  .sec-body { display: flex; flex-direction: column; gap: 20px; max-width: 68ch; }
+  .sec-body p { color: var(--muted); }
+  .sec-body p strong { color: var(--text); font-weight: bold; }
+
+  /* ---------- timeline table ---------- */
+  .scroll-x { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 440px; font-size: 15px; }
+  caption {
+    text-align: left; font-size: 11px; letter-spacing: 0.17em; text-transform: uppercase;
+    color: var(--muted); padding-bottom: 12px;
+  }
+  th, td { text-align: left; padding: 13px 16px 13px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: var(--font-body); font-size: 10.5px; letter-spacing: 0.17em; text-transform: uppercase; color: var(--gold); font-weight: normal; }
+  td.when { color: var(--gold); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td.what { color: var(--text); }
+  td.note { color: var(--muted); font-size: 14px; }
+  tr.heavy td.when { color: var(--text); background: var(--panel-2); padding-left: 12px; }
+
+  /* ---------- steps ---------- */
+  .step { display: grid; grid-template-columns: 62px 1fr; gap: 0 22px; padding-block: 30px; border-top: 1px solid var(--line); }
+  .step:first-of-type { border-top: 0; }
+  .step-num { font-family: var(--font-head); font-size: 34px; color: var(--gold-dim); line-height: 1; padding-top: 4px; font-variant-numeric: tabular-nums; }
+  .step-body { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+  .step-body > p { color: var(--muted); max-width: 62ch; }
+  .step-body h3 em { color: var(--gold); font-style: italic; }
+
+  ul.ticks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+  ul.ticks li { position: relative; padding-left: 20px; color: var(--muted); max-width: 62ch; }
+  ul.ticks li::before { content: ""; position: absolute; left: 0; top: 10px; width: 8px; height: 1px; background: var(--gold); }
+  ul.ticks li b { color: var(--text); font-weight: bold; }
+
+  /* ---------- code ---------- */
+  .code { border: 1px solid var(--line); background: var(--panel); }
+  .code-top {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 9px 12px; border-bottom: 1px solid var(--line); background: var(--panel-2);
+  }
+  .code-top span { font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .copy {
+    font-family: var(--font-body); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    background: transparent; color: var(--gold); border: 1px solid var(--line-gold);
+    padding: 5px 11px; cursor: pointer;
+  }
+  .copy:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+  .copy:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  pre { margin: 0; padding: 14px; overflow-x: auto; font-family: var(--font-mono); font-size: 13.5px; line-height: 1.75; color: var(--text); }
+  pre .c { color: var(--gold-dim); }
+  code { font-family: var(--font-mono); font-size: 0.92em; color: var(--gold); }
+
+  /* ---------- callout ---------- */
+  .callout { border-left: 2px solid var(--gold); background: var(--panel); padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; }
+  .callout .k { font-size: 10.5px; letter-spacing: 0.17em; text-transform: uppercase; color: var(--gold); }
+  .callout p { color: var(--muted); max-width: 62ch; }
+
+  /* ---------- guardrails ---------- */
+  .rails { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .rail { background: var(--bg); padding: 20px; display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+  .rail dt { font-family: var(--font-head); font-size: 18px; color: var(--text); }
+  .rail dd { margin: 0; color: var(--muted); font-size: 14.5px; }
+  .rail .val { color: var(--gold); font-family: var(--font-mono); font-size: 13px; }
+
+  /* ---------- cta ---------- */
+  .cta { background: var(--panel); border-top: 1px solid var(--line-gold); }
+  .cta .wrap { padding-block: clamp(40px, 6vw, 68px); display: flex; flex-direction: column; gap: 24px; }
+  .cta-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(24px, 4vw, 48px); align-items: start; }
+  .contact { border: 1px solid var(--line-gold); padding: 22px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .contact .row { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .contact .row dt { font-size: 10.5px; letter-spacing: 0.17em; text-transform: uppercase; color: var(--muted); }
+  .contact .row dd { margin: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
+  .contact .v { font-family: var(--font-mono); font-size: 14.5px; color: var(--gold); word-break: break-all; }
+  a { color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--line-gold); }
+  a:hover { border-bottom-color: var(--gold); }
+  a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  /* ---------- footer ---------- */
+  footer { border-top: 1px solid var(--line); }
+  footer .wrap { padding-block: 34px; display: flex; flex-direction: column; gap: 18px; }
+  footer img.sig { width: 150px; height: auto; opacity: 0.85; }
+  footer p { font-size: 13.5px; color: var(--muted); max-width: 70ch; }
+  .fine { font-size: 12px; color: var(--gold-dim); }
+
+  @media (max-width: 760px) {
+    .hero-grid, .cta-grid { grid-template-columns: 1fr; }
+    .portrait { max-width: 340px; }
+    .step { grid-template-columns: 1fr; gap: 12px; }
+    .step-num { font-size: 26px; padding-top: 0; }
+    .fact + .fact { border-left: 0; padding-left: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <img src="camby-ai-logo-web.png" alt="CAMBY Ai">
+    <div class="tag">Network Map &middot; Build Guide</div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="hero-copy">
+      <p class="eyebrow">00 <span class="sep">/</span> Your network, on one map</p>
+      <h1>Everyone you know.<br><em>One private map.</em></h1>
+      <p class="lede">You already know the person who can open the door. You cannot see them, because your
+        people are split across your phone, your inbox, your calendar and three social apps.
+        <strong>This puts them on one map,</strong> shows who is tied to whom and why, and finds the warm
+        path to the person you want to meet.</p>
+      <p class="lede">This is not a download. It is a build brief: the instructions I would hand an engineer,
+        written so your own AI can build it from your own data, on your own computer. It is built the way
+        mine is, and none of my data is in it. The finished map runs on your own computer.</p>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">01 <span class="sep">/</span> What you get</p>
+      <h2>Seven views.<br><em>One page.</em></h2>
+    </div>
+    <ul class="ticks">
+      <li><b>The globe.</b> Every city where you know someone is a pillar. The more people, the taller it stands. Click one and you fly in.</li>
+      <li><b>City lists.</b> Everyone in that city, sorted by who you are closest to.</li>
+      <li><b>The file on each person.</b> Role, how you met, the last time you talked and on which channel: text, email, calendar or a social app.</li>
+      <li><b>Search.</b> One box over names, titles, companies, industries, cities and your own tags.</li>
+      <li><b>The graph.</b> Who is tied to whom. Every line carries its proof: a shared group chat, an email thread, a shared company.</li>
+      <li><b>Connectors.</b> The people tied to the most of your people, with proven ties counted before guessed ones.</li>
+      <li><b>Warm paths.</b> Type what you need, such as a role or an industry. You get the people who match and who you already know that can open the door.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">02 <span class="sep">/</span> What it is built from</p>
+      <h2>Your own exports.<br><em>Nothing scraped.</em></h2>
+    </div>
+    <div class="scroll-x">
+      <table>
+        <caption>Where the data comes from</caption>
+        <thead>
+          <tr><th scope="col">Source</th><th scope="col">What you hand your AI</th><th scope="col">Good to know</th></tr>
+        </thead>
+        <tbody>
+          <tr class="heavy">
+            <td class="when">Contacts or CRM</td>
+            <td class="what">A CSV export, one row per person</td>
+            <td class="note">This is the spine. Everything else is joined onto it. Google Contacts exports CSV. iCloud exports a vCard file your AI can convert</td>
+          </tr>
+          <tr>
+            <td class="when">Texts on a Mac</td>
+            <td class="what">Nothing to export. The Messages database is already on your Mac</td>
+            <td class="note">Your AI reads who, when and how many. Never the words. The app it runs in needs Full Disk Access, which you grant in System Settings</td>
+          </tr>
+          <tr>
+            <td class="when">Email and calendar</td>
+            <td class="what">Who was on each thread and each event, with the date</td>
+            <td class="note">Mine came through my AI's mail and calendar connections. A Google Takeout export holds the same facts</td>
+          </tr>
+          <tr>
+            <td class="when">Instagram</td>
+            <td class="what">The official &ldquo;Download your information&rdquo; file</td>
+            <td class="note">Ask for followers and following only, and set the date range to all time. Instagram emails you when it is ready</td>
+          </tr>
+          <tr>
+            <td class="when">LinkedIn</td>
+            <td class="what">The official data export, the Connections file</td>
+            <td class="note">Names, companies and titles. My CRM already holds my connections, so my build takes them from there</td>
+          </tr>
+          <tr>
+            <td class="when">Anything else</td>
+            <td class="what">A spreadsheet you type yourself</td>
+            <td class="note">Some apps will not export who you have in common with someone. Type the ones that matter. Do not scrape them</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sec-body" style="margin-top:22px">
+      <p>Start with the contacts export alone. It is enough for the globe, the city lists, the files and search. Each source you add after that makes the graph and the warm paths better.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">03 <span class="sep">/</span> How to build it</p>
+      <h2>Six steps.<br><em>Your AI does the typing.</em></h2>
+    </div>
+
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-body">
+        <h3>Make one folder and open your AI in it</h3>
+        <p>Use an AI that can read files and run code on your computer, such as Claude Code. Everything stays inside this folder.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-body">
+        <h3>Put your contacts export in it</h3>
+        <p>One CSV. Add the other exports from section 02 when you have them. Do not wait for all of them.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-body">
+        <h3>Paste the build brief</h3>
+        <p>It is in section 04 below. Copy all of it and paste it as your first message.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-body">
+        <h3>Answer its two questions</h3>
+        <p>It will ask how you sort people today: your stages, such as inner circle, friends and new contacts, and any tags you use for people you trust. That is what &ldquo;closest first&rdquo; is built on. If you have neither, say so and it will sort by how recently you were in touch.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">05</div>
+      <div class="step-body">
+        <h3>Check the counts after every step <em>before you say go on</em></h3>
+        <p>The brief makes your AI stop and report what matched, what did not and what it assumed. Read ten sample rows. If a name is matched to the wrong person, say so now. It is much harder to see later.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">06</div>
+      <div class="step-body">
+        <h3>Open your map</h3>
+        <p>The page loads its data from the folder, so the folder has to be served. Run this in the folder, then open the address in your browser.</p>
+        <div class="code">
+          <div class="code-top"><span>Run in the folder</span><button class="copy" type="button">Copy</button></div>
+<pre>python3 -m http.server 8000 --bind 127.0.0.1</pre>
+        </div>
+        <div class="code">
+          <div class="code-top"><span>Then open</span><button class="copy" type="button">Copy</button></div>
+<pre>http://localhost:8000/map.html</pre>
+        </div>
+        <p>The last part of that command keeps the page on your own computer. Other devices on your network cannot open it.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">04 <span class="sep">/</span> The build brief</p>
+      <h2>Copy this.<br><em>Paste it into your AI.</em></h2>
+    </div>
+    <div class="sec-body" style="margin-bottom:22px">
+      <p>This is the whole specification: the rules, the folders, how people are matched across sources, how closeness and links are scored, and what each view does. It tells your AI to ask before it reads anything outside the folder.</p>
+    </div>
+        <div class="code">
+          <div class="code-top"><span>Paste into your AI</span><button class="copy" type="button">Copy</button></div>
+<pre style="max-height:560px;overflow:auto;white-space:pre-wrap">BUILD BRIEF: PERSONAL NETWORK MAP
+
+Build me a private, local tool that puts everyone I have been in contact with on one map, shows how they are tied to each other, and finds warm paths to people I want to meet. Work in this folder. Ask me before you read any file outside it.
+
+HARD RULES
+1. Local only. The build script reads local files and makes no network calls. No geocoding API, no enrichment API, no model calls on my contacts.
+2. Read only. Never write to my contacts app, my messages, my mail or my calendar.
+3. Never read message bodies or note text. Use metadata only: who, when, how many, the name of a group chat, the subject of a thread.
+4. Phone numbers and email addresses are for matching only. They never appear in the output files.
+5. Nothing is invented. A missing field shows as "Not on record". A location written as a guess ("likely", "unknown") stays unplaced.
+6. Never create a person from a stranger in a thread. Only match to people I already have.
+7. Keep a list of what the data cannot tell me (the gaps) and show it in the page.
+8. In this chat, show me counts and at most ten sample rows. Never print my whole contact list here.
+
+FOLDERS
+data/contacts/   my contacts or CRM export, CSV, one row per person
+data/edges/      who appeared together: imessage.jsonl, gmail.jsonl, calendar.jsonl
+data/social/     Instagram followers and following, as a TSV
+tools/           one small script per source
+build.py         merges everything and writes out/
+out/data.json    people, links, cities, meta
+map.html         the whole front end, one file
+
+STACK
+- Python 3, standard library only (csv, json, sqlite3, zipfile, re).
+- One HTML file. d3 version 7 and topojson from a CDN. No framework, no bundler, no build step.
+- The globe is d3.geoOrthographic drawn on a 2D canvas. The graph is d3.forceSimulation on the same canvas. No WebGL.
+- The page loads out/data.json with fetch, so the folder has to be served, on this computer only: python3 -m http.server 8000 --bind 127.0.0.1
+
+DATA MODEL
+person: id, name, title, company, industry, city, raw location, stage, met (yes or no), tags, groups, lanes, how we met, last touch "YYYY-MM-DD (channel)", last date per channel, sources, closeness score
+link:   [person a, person b, type, confidence 0 to 3, evidence in one line]
+city:   [key, label, lat, lon]
+meta:   counts, lanes, gaps, when it was built
+
+MATCHING PEOPLE ACROSS SOURCES
+- The contacts export is the spine. Every other source is joined onto it.
+- Match in this order: email, then phone (last 10 digits), then full name only when exactly one person has that name.
+- Merge two records with the same full name only if the name has at least two words and seven letters and their companies do not conflict.
+- Count what did not match and report it. Do not guess.
+
+LAST TOUCH
+- For each person keep the latest date per channel: text, email, calendar, call, and each social app my export has a date for.
+- Last touch is the newest of those, with the channel named.
+
+CLOSENESS (sort every list by this, closest first)
+- Points for the relationship stage I have recorded for the person.
+- Points for the trust tags I use.
+- Recency: more points under 90 days, fewer under a year, a few under three years.
+- Minus points for people I have not met yet.
+Ask me for my stages and tags before you write this.
+
+CITIES
+- Use an offline table of cities: name, aliases, lat, lon. Start with the cities that appear in my data.
+- Place a person only when their location text matches a city in the table.
+- Let me correct a city in the page. Save corrections to a local overrides file, never back to my contacts app.
+
+LINKS AND EVIDENCE
+Keep one link per pair and type, at the highest confidence:
+3  my contacts app says they are related
+2  one is named in my notes about the other; both are tagged on the same note; they share small group chats, email threads or calendar events (8 people or fewer, or three or more shared)
+1  the same, in bigger groups; same current company (skip any company with more than 25 of my contacts)
+0  same past employer or school; same small group in my contacts app
+Evidence is one short line, for example: 3 shared group chats, latest 2025: "&lt;chat name&gt;" (6 people)
+"Evidenced" means 2 or 3. "Inferred" means 0 or 1. The page shows evidenced links by default.
+
+SOURCES (one script each, all read only)
+- Contacts or CRM: the CSV export.
+- Messages on a Mac: ~/Library/Messages/chat.db, opened read only. Group chats with 2 to 25 members and at least 3 messages: chat name, last date, count, members. One to one chats: last date and count. Resolve handles through the Contacts database. No message text.
+- Mail and calendar: for each thread or event, the date, the subject or title, and the participants.
+- Instagram: the official "Download your information" file. Open only the followers and following files. Label each handle: follow each other, follows you, you follow.
+- LinkedIn: the official data export. Open only the connections file: name, company, title, date connected.
+- Anything a platform will not export, I will type into a spreadsheet myself. Do not scrape any site.
+
+THE PAGE
+1. Globe. Every city is a pillar that grows with the number of people there. Click a city to fly in and list its people, closest first.
+2. Dossier. Click a person: role, stage, last touch, last date per channel, where they were found, and their links with the evidence.
+3. Search. One box over name, title, company, industry, location and tags. Cities match too.
+4. Graph. Everyone as a dot, links as lines, grouped by lane. Pick one person and light up their circle.
+5. Connectors. Rank people by how many of my people they are tied to. Count evidenced links before inferred ones.
+6. Warm paths. I type what I need: a role, an industry, a company. Targets are the people who match. A door is someone I have met who has a link to a target. Show me, the door, the target, and the evidence for each hop.
+7. Data notes. The gaps list.
+
+BUILD ORDER
+1. Contacts export to people. Show me the counts and ten sample rows before going on.
+2. Cities and the globe.
+3. Messages, mail and calendar to links.
+4. Dossier, search and graph.
+5. Connectors and warm paths.
+6. Social exports.
+After each step tell me what matched, what did not, and what you assumed.</pre>
+        </div>
+    <div class="sec-body" style="margin-top:16px">
+      <p>Prefer a file? <a href="network-map-brief.txt">Open the brief as plain text</a>.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">05 <span class="sep">/</span> The guardrails</p>
+      <h2>This is other people&rsquo;s<br><em>information.</em></h2>
+    </div>
+    <dl class="rails">
+      <div class="rail">
+        <dt>Local only</dt>
+        <dd>The build script reads local files and calls nothing. No lookup service and no enrichment. The page loads its charting library from a public CDN and sends none of your data anywhere.</dd>
+        <dd class="val">runs on your machine</dd>
+      </div>
+      <div class="rail">
+        <dt>Read only</dt>
+        <dd>It never writes to your contacts, your messages, your mail or your calendar.</dd>
+        <dd class="val">nothing is changed</dd>
+      </div>
+      <div class="rail">
+        <dt>No message text</dt>
+        <dd>It reads who, when and how many. It does not open what anyone wrote.</dd>
+        <dd class="val">metadata only</dd>
+      </div>
+      <div class="rail">
+        <dt>Nothing invented</dt>
+        <dd>A missing field says &ldquo;Not on record&rdquo;. A city written as a guess stays off the map.</dd>
+        <dd class="val">blanks stay blank</dd>
+      </div>
+      <div class="rail">
+        <dt>No strangers</dt>
+        <dd>Someone on a thread who is not in your contacts does not become a person on the map.</dd>
+        <dd class="val">your people only</dd>
+      </div>
+      <div class="rail">
+        <dt>No scraping</dt>
+        <dd>Every source is your own export or a file you typed.</dd>
+        <dd class="val">official exports</dd>
+      </div>
+    </dl>
+    <div class="callout" style="margin-top:26px">
+      <span class="k">What your AI sees</span>
+      <p>The AI that builds this reads the files you point it at. If it is a cloud AI, what it reads goes to that provider under their terms, so use one you would trust with your address book. The brief tells it to work from counts and ten sample rows, and never to print your whole list. If that is still too much, have it build on a made-up sample, then run the finished build script on the real export yourself.</p>
+    </div>
+    <div class="callout" style="margin-top:26px">
+      <span class="k">Keep it private</span>
+      <p>The finished map holds names, employers and who knows whom. Do not put the folder on a public site, a shared drive or a public code repository. If you show it to anyone, show it on your own screen.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">06 <span class="sep">/</span> Be honest about it</p>
+      <h2>What it <em>cannot tell you</em></h2>
+    </div>
+    <div class="scroll-x">
+      <table>
+        <caption>The limits in my own build</caption>
+        <thead>
+          <tr><th scope="col">Limit</th><th scope="col">What happens</th><th scope="col">What to do</th></tr>
+        </thead>
+        <tbody>
+          <tr class="heavy">
+            <td class="when">Cities</td>
+            <td class="what">About one in five of my people has a city on record, so about one in five is on the globe</td>
+            <td class="note">Fix a city on the page when you notice it. The correction is saved locally</td>
+          </tr>
+          <tr>
+            <td class="when">Roles</td>
+            <td class="what">About a third of my people have a title or company</td>
+            <td class="note">Search and warm paths only see what is written down. Fill in the people who matter</td>
+          </tr>
+          <tr>
+            <td class="when">Instagram</td>
+            <td class="what">The export lists followers and following. It does not say who you have in common with someone</td>
+            <td class="note">Use it to see who follows you back, not as proof of a tie</td>
+          </tr>
+          <tr>
+            <td class="when">Facebook</td>
+            <td class="what">It does not export who you have in common with someone</td>
+            <td class="note">Type the ones that matter into a sheet</td>
+          </tr>
+          <tr>
+            <td class="when">Matching</td>
+            <td class="what">Two records join only on an email, a phone number or a name that exactly one person has</td>
+            <td class="note">Some real matches are missed on purpose. A wrong merge is worse</td>
+          </tr>
+          <tr>
+            <td class="when">Search</td>
+            <td class="what">It matches the words you type against what is on record. It is not an AI guessing who you mean</td>
+            <td class="note">Type the word a person would have in their title, industry or tags</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="sec-body" style="margin-top:22px">
+      <p>A map built from a thin address book is a thin map. <strong>The value comes from the notes you already keep on people,</strong> and it grows every time you add one.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">07 <span class="sep">/</span> Who reads the map</p>
+      <h2>Give it to <em>an AI employee</em></h2>
+    </div>
+    <div class="sec-body">
+      <p>In the reel, Franki is the one driving. She is my AI employee for people: she keeps one record per person, watches the dates and tells me who to think of before an event. The map is what she looks at.</p>
+      <p>Her setup guide is free at <a href="https://franki.mikecamby.com">franki.mikecamby.com</a>. The map works without her.</p>
+    </div>
+  </div>
+</section>
+
+<div class="cta">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">08 <span class="sep">/</span> If you get stuck</p>
+      <h2>Or we <em>set it up for you</em></h2>
+    </div>
+    <div class="cta-grid">
+      <div class="sec-body">
+        <p>The page is the easy part. The work is the data: getting the exports, matching the same person
+          across five places without merging two different people, and deciding what counts as a real tie.</p>
+        <p>If a step fails, paste the exact error into your AI and let it patch the step. If you would rather
+          have this built with you, that is a conversation I am happy to have.</p>
+        <p><strong>Tell me where your contacts live today and what you would use the map for first.</strong>
+          I will tell you if this fits.</p>
+      </div>
+      <dl class="contact">
+        <div class="row">
+          <dt>Email</dt>
+          <dd><span class="v" id="v-email">mike@mikecamby.com</span>
+            <button class="copy" type="button" data-copy="mike@mikecamby.com">Copy</button></dd>
+        </div>
+        <div class="row">
+          <dt>Text</dt>
+          <dd><span class="v" id="v-phone">747.441.6578</span>
+            <button class="copy" type="button" data-copy="747.441.6578">Copy</button></dd>
+        </div>
+        <div class="row">
+          <dt>Book a time</dt>
+          <dd><a href="https://cal.com/mikecamby">cal.com/mikecamby</a></dd>
+        </div>
+        <div class="row">
+          <dt>Franki</dt>
+          <dd><a href="https://franki.mikecamby.com">franki.mikecamby.com</a></dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <img class="sig" src="camby-signature-web.png" alt="Camby">
+    <p>This guide is CAMBY Ai's own. It describes how my network map is built. I have not run this brief on
+      anyone else's data, so treat it as a specification, not a tested installer.</p>
+    <p class="fine">CAMBY Ai &middot; AI solutions for local businesses &middot; Las Vegas, Nevada &middot; More revenue. Less costs.</p>
+    <p class="fine">Not affiliated with or endorsed by Apple, Google, Meta, LinkedIn or any other company named here. Names belong to their owners.
+      You are responsible for how you store and use other people's information. Written in November 2026. Export steps change.</p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll(".copy").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var text = btn.dataset.copy;
+      if (!text) {
+        var block = btn.closest(".code");
+        var pre = block && block.querySelector("pre");
+        if (!pre) return;
+        text = pre.innerText.replace(/[ \t]*#.*$/gm, "").trim();
+      }
+      var done = function () {
+        var prev = btn.textContent;
+        btn.textContent = "Copied";
+        setTimeout(function () { btn.textContent = prev; }, 1400);
+      };
+      try {
+        navigator.clipboard.writeText(text).then(done, function () { select(btn, text); });
+      } catch (e) {
+        select(btn, text);
+      }
+    });
+  });
+
+  function select(btn, text) {
+    var holder = btn.closest(".code") || btn.parentElement;
+    var target = holder && (holder.querySelector("pre") || holder.querySelector(".v"));
+    if (!target) return;
+    var range = document.createRange();
+    range.selectNodeContents(target);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    btn.textContent = "Select and copy";
+    setTimeout(function () { btn.textContent = "Copy"; }, 2200);
+  }
+</script>
+
+</body>
+</html>

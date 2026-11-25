@@ -1,0 +1,91 @@
+BUILD BRIEF: PERSONAL NETWORK MAP
+
+Build me a private, local tool that puts everyone I have been in contact with on one map, shows how they are tied to each other, and finds warm paths to people I want to meet. Work in this folder. Ask me before you read any file outside it.
+
+HARD RULES
+1. Local only. The build script reads local files and makes no network calls. No geocoding API, no enrichment API, no model calls on my contacts.
+2. Read only. Never write to my contacts app, my messages, my mail or my calendar.
+3. Never read message bodies or note text. Use metadata only: who, when, how many, the name of a group chat, the subject of a thread.
+4. Phone numbers and email addresses are for matching only. They never appear in the output files.
+5. Nothing is invented. A missing field shows as "Not on record". A location written as a guess ("likely", "unknown") stays unplaced.
+6. Never create a person from a stranger in a thread. Only match to people I already have.
+7. Keep a list of what the data cannot tell me (the gaps) and show it in the page.
+8. In this chat, show me counts and at most ten sample rows. Never print my whole contact list here.
+
+FOLDERS
+data/contacts/   my contacts or CRM export, CSV, one row per person
+data/edges/      who appeared together: imessage.jsonl, gmail.jsonl, calendar.jsonl
+data/social/     Instagram followers and following, as a TSV
+tools/           one small script per source
+build.py         merges everything and writes out/
+out/data.json    people, links, cities, meta
+map.html         the whole front end, one file
+
+STACK
+- Python 3, standard library only (csv, json, sqlite3, zipfile, re).
+- One HTML file. d3 version 7 and topojson from a CDN. No framework, no bundler, no build step.
+- The globe is d3.geoOrthographic drawn on a 2D canvas. The graph is d3.forceSimulation on the same canvas. No WebGL.
+- The page loads out/data.json with fetch, so the folder has to be served, on this computer only: python3 -m http.server 8000 --bind 127.0.0.1
+
+DATA MODEL
+person: id, name, title, company, industry, city, raw location, stage, met (yes or no), tags, groups, lanes, how we met, last touch "YYYY-MM-DD (channel)", last date per channel, sources, closeness score
+link:   [person a, person b, type, confidence 0 to 3, evidence in one line]
+city:   [key, label, lat, lon]
+meta:   counts, lanes, gaps, when it was built
+
+MATCHING PEOPLE ACROSS SOURCES
+- The contacts export is the spine. Every other source is joined onto it.
+- Match in this order: email, then phone (last 10 digits), then full name only when exactly one person has that name.
+- Merge two records with the same full name only if the name has at least two words and seven letters and their companies do not conflict.
+- Count what did not match and report it. Do not guess.
+
+LAST TOUCH
+- For each person keep the latest date per channel: text, email, calendar, call, and each social app my export has a date for.
+- Last touch is the newest of those, with the channel named.
+
+CLOSENESS (sort every list by this, closest first)
+- Points for the relationship stage I have recorded for the person.
+- Points for the trust tags I use.
+- Recency: more points under 90 days, fewer under a year, a few under three years.
+- Minus points for people I have not met yet.
+Ask me for my stages and tags before you write this.
+
+CITIES
+- Use an offline table of cities: name, aliases, lat, lon. Start with the cities that appear in my data.
+- Place a person only when their location text matches a city in the table.
+- Let me correct a city in the page. Save corrections to a local overrides file, never back to my contacts app.
+
+LINKS AND EVIDENCE
+Keep one link per pair and type, at the highest confidence:
+3  my contacts app says they are related
+2  one is named in my notes about the other; both are tagged on the same note; they share small group chats, email threads or calendar events (8 people or fewer, or three or more shared)
+1  the same, in bigger groups; same current company (skip any company with more than 25 of my contacts)
+0  same past employer or school; same small group in my contacts app
+Evidence is one short line, for example: 3 shared group chats, latest 2025: "<chat name>" (6 people)
+"Evidenced" means 2 or 3. "Inferred" means 0 or 1. The page shows evidenced links by default.
+
+SOURCES (one script each, all read only)
+- Contacts or CRM: the CSV export.
+- Messages on a Mac: ~/Library/Messages/chat.db, opened read only. Group chats with 2 to 25 members and at least 3 messages: chat name, last date, count, members. One to one chats: last date and count. Resolve handles through the Contacts database. No message text.
+- Mail and calendar: for each thread or event, the date, the subject or title, and the participants.
+- Instagram: the official "Download your information" file. Open only the followers and following files. Label each handle: follow each other, follows you, you follow.
+- LinkedIn: the official data export. Open only the connections file: name, company, title, date connected.
+- Anything a platform will not export, I will type into a spreadsheet myself. Do not scrape any site.
+
+THE PAGE
+1. Globe. Every city is a pillar that grows with the number of people there. Click a city to fly in and list its people, closest first.
+2. Dossier. Click a person: role, stage, last touch, last date per channel, where they were found, and their links with the evidence.
+3. Search. One box over name, title, company, industry, location and tags. Cities match too.
+4. Graph. Everyone as a dot, links as lines, grouped by lane. Pick one person and light up their circle.
+5. Connectors. Rank people by how many of my people they are tied to. Count evidenced links before inferred ones.
+6. Warm paths. I type what I need: a role, an industry, a company. Targets are the people who match. A door is someone I have met who has a link to a target. Show me, the door, the target, and the evidence for each hop.
+7. Data notes. The gaps list.
+
+BUILD ORDER
+1. Contacts export to people. Show me the counts and ten sample rows before going on.
+2. Cities and the globe.
+3. Messages, mail and calendar to links.
+4. Dossier, search and graph.
+5. Connectors and warm paths.
+6. Social exports.
+After each step tell me what matched, what did not, and what you assumed.
